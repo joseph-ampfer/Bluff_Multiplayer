@@ -21,19 +21,6 @@ style: |
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
   }
----
-
-<!-- _class: lead -->
-<!-- _backgroundColor: #dc2626 -->
-<!-- _color: white -->
-
-# Liar's Deck
-## Sprint 1 Review
-
-**Joey Ampfer**
-Individual Project — ASE 285
-
----
 
 <!-- _class: lead -->
 <!-- _backgroundColor: #059669 -->
