@@ -148,23 +148,46 @@ Each requirement includes a direct acceptance test. Testing will include:
 
 ---
 
+## Sprint Status
+
+### Sprint 1 (Complete)
+
+| Metric       | Planned | Completed | Burndown |
+| ------------ | ------- | --------- | -------- |
+| Features     | 3       | 3         | 100%     |
+| Requirements | 9       | 9         | 100%     |
+
+**Features delivered:** F1 (Matchmaking & Lobby), F2 (Card Dealing), F3 (Turn-Based Gameplay)
+
+### Sprint 2 (In Progress)
+
+| Metric       | Planned | Completed | Burndown |
+| ------------ | ------- | --------- | -------- |
+| Features     | 3       | 0         | 0%       |
+| Requirements | 9       | 0         | 0%       |
+
+**Features planned:** F4 (Bluff Detection), F5 (Hidden State Views), F6 (Session Persistence)
+
+---
+
 ## Developer Information
 
 | Name        | Role           |
 | ----------- | -------------- |
-| *Your Name* | Sole Developer |
+| Joey Ampfer | Sole Developer |
 
 ---
 
 ## Links
 
-| Resource              | Link               |
-| --------------------- | ------------------ |
-| GitHub Repository     | *TBD*              |
-| Project Documentation | [docs/](./docs/)   |
-| Source Code           | [src/](./src/)     |
-| Tests                 | [tests/](./tests/) |
-| Demo Video            | *TBD*              |
+| Resource              | Link                                                              |
+| --------------------- | ----------------------------------------------------------------- |
+| GitHub Repository     | https://github.com/joseph-ampfer/Bluff_Multiplayer                |
+| Project Documentation | [docs/](./docs/)                                                  |
+| Source Code           | [src/](./src/)                                                    |
+| Tests                 | [tests/](./tests/)                                                |
+| Sprint 1 Plan         | [docs/sprints/sprint1.md](./docs/sprints/sprint1.md)              |
+| Demo Video            | *TBD*                                                             |
 
 ---
 
