@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "description": "Server for Bluff Multiplayer",
   "type": "module",
-  "main": "index.js",
+  "main": "dist/backend/index.js",
   "scripts": {
+    "dev": "tsx watch index.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
     "test": "vitest",
-    "start": "nodemon index.js"
+    "start": "node dist/backend/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -18,7 +21,11 @@
     "socket.io": "^4.8.3"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.3.3",
     "socket.io-client": "^4.8.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   }
 }

@@ -3,6 +3,7 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  color: white;
 }
 
 .logo {
@@ -105,4 +106,57 @@
 .error {
   color: red;
   font-weight: bold;
+}
+
+#background-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+
+.table-surface {
+  /* background-color: rgba(0, 255, 8, 0.269); */
+  z-index: -1;
+  position: fixed;
+  /* TODO: make this dynamic based on the size of the screen */
+  top: 25%;
+  left: 10%;
+  width: 75vw;
+  height: 50vh;
+
+  transform: rotateX(50deg);
+  /* transform-origin: bottom center; */
+  perspective: 1000px;
+  transform-style: preserve-3d;
+
+  display: relative;
+
+}
+
+.table-card {
+  background-color: rgba(192, 192, 192, 0.925);
+  transform: rotateZ(45deg);
+  scale: 0.85;
+  position: absolute;
+  top: 50%;
+  left: 35%;
+  transform: translate(-50%, -50%) rotateZ(25deg);
+}
+
+.playing-card.played {
+  background-color: rgba(192, 192, 192, 0.704);
+  color: black;
+  z-index: -1;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateX(50deg) rotateZ(45deg);
+  scale: 0.85;
+  /* transform-origin: bottom center; */
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  transition: all 1s ease;
 }
