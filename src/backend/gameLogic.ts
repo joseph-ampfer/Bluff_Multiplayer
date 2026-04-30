@@ -98,7 +98,7 @@ export function showCurrentPlayerHand(gameState: GameState, socket: Socket): Gam
 }
 
 // Shuffle the deck of cards
-function shuffleDeck<T>(cardDeck: T[]): T[] {
+export function shuffleDeck<T>(cardDeck: T[]): T[] {
   const deck = [...cardDeck];
   for (let i = deck.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

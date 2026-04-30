@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { io as ioc } from 'socket.io-client';
 import { createApp } from '../app.js';
+import { ROOM_NAME } from '../gameLogic.js';
 
-let httpServer, io, getGameState, resetGameState;
+let httpServer, io, resetGameState;
 let clientSockets = [];
 
 function connectClient() {
@@ -19,12 +20,21 @@ function waitForEvent(socket, event) {
   });
 }
 
+/** Resolves with the first gameState that satisfies predicate (handles multi-broadcast flows like joinRoom + setUsername). */
+async function waitForGameState(socket, predicate, maxAttempts = 20) {
+  for (let i = 0; i < maxAttempts; i++) {
+    const state = await waitForEvent(socket, 'gameState');
+    if (predicate(state)) return state;
+  }
+  throw new Error('waitForGameState: predicate not satisfied');
+}
+
 beforeEach(async () => {
   const app = await createApp();
   httpServer = app.httpServer;
   io = app.io;
-  getGameState = app.getGameState;
   resetGameState = app.resetGameState;
+  resetGameState();
   await new Promise((resolve) => {
     httpServer.listen(0, () => resolve());
   });
@@ -43,9 +53,13 @@ afterEach(() => {
 async function joinPlayer(name) {
   const socket = connectClient();
   await waitForEvent(socket, 'connect');
-  const gameStatePromise = waitForEvent(socket, 'gameState');
-  socket.emit('join', name);
-  const state = await gameStatePromise;
+  const afterJoinPromise = waitForEvent(socket, 'gameState');
+  socket.emit('joinRoom', ROOM_NAME);
+  await afterJoinPromise;
+
+  const namedStatePromise = waitForEvent(socket, 'gameState');
+  socket.emit('setUsername', name, ROOM_NAME);
+  const state = await namedStatePromise;
   return { socket, state };
 }
 
@@ -83,17 +97,26 @@ describe('F1: Matchmaking and Lobby', () => {
     await joinPlayer('Alice');
     const s2 = connectClient();
     await waitForEvent(s2, 'connect');
+    const afterJoinPromise = waitForEvent(s2, 'gameState');
+    s2.emit('joinRoom', ROOM_NAME);
+    await afterJoinPromise;
+
     const errorPromise = waitForEvent(s2, 'error');
-    s2.emit('join', 'Alice');
+    s2.emit('setUsername', 'Alice', ROOM_NAME);
     const error = await errorPromise;
-    expect(error).toBe('Player already exists');
+    expect(error).toBe('Username already exists');
   });
 
   it('R1.2 — two clients see each other in the player list', async () => {
     const { socket: s1 } = await joinPlayer('Alice');
-    const s1UpdatePromise = waitForEvent(s1, 'gameState');
-    const { state: s2State } = await joinPlayer('Bob');
-    const s1State = await s1UpdatePromise;
+    const bobPromise = joinPlayer('Bob');
+    const s1State = await waitForGameState(
+      s1,
+      (s) =>
+        s.players.length === 2 &&
+        s.players.every((p) => p.name && p.name.length > 0),
+    );
+    const { state: s2State } = await bobPromise;
 
     expect(s1State.players).toHaveLength(2);
     expect(s2State.players).toHaveLength(2);
@@ -105,9 +128,10 @@ describe('F1: Matchmaking and Lobby', () => {
     const { socket: s1 } = await joinPlayer('Alice');
     await joinPlayer('Bob');
 
-    const s1UpdatePromise = waitForEvent(s1, 'gameState');
     s1.emit('ready');
-    const updatedState = await s1UpdatePromise;
+    const updatedState = await waitForGameState(s1, (s) =>
+      s.players.some((p) => p.name === 'Alice' && p.ready === true),
+    );
 
     const alice = updatedState.players.find(p => p.name === 'Alice');
     expect(alice.ready).toBe(true);
@@ -265,14 +289,14 @@ describe('F3: Turn-Based Gameplay and Validation', () => {
     expect(newState.whosTurn.name).toBe(secondPlayer);
   });
 
-  it('R3.1 — move from wrong player emits error', async () => {
+  it('R3.1 — callLiar from wrong player emits error', async () => {
     const { s1, s2, finalState1 } = await joinAndReadyTwo();
 
     const firstPlayer = finalState1.whosTurn.name;
     const wrongSocket = firstPlayer === 'Alice' ? s2 : s1;
 
     const errorPromise = waitForEvent(wrongSocket, 'error');
-    wrongSocket.emit('move', 'king');
+    wrongSocket.emit('callLiar');
     const error = await errorPromise;
     expect(error).toBe('Not your turn');
   });

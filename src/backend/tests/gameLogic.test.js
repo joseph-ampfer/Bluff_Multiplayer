@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
-  liarDeck,
-  tableRanks,
+  LIAR_DECK,
+  TABLE_RANKS,
   createGameState,
   shuffleDeck,
   dealCards,
@@ -10,34 +10,34 @@ import {
 
 describe('shuffleDeck', () => {
   it('returns exactly 20 cards', () => {
-    const deck = shuffleDeck(liarDeck);
+    const deck = shuffleDeck(LIAR_DECK);
     expect(deck).toHaveLength(20);
   });
 
   it('contains correct rank distribution (6K, 6Q, 6A, 2J)', () => {
-    const deck = shuffleDeck(liarDeck);
+    const deck = shuffleDeck(LIAR_DECK);
     const counts = { king: 0, queen: 0, ace: 0, joker: 0 };
     deck.forEach(card => counts[card.rank]++);
     expect(counts).toEqual({ king: 6, queen: 6, ace: 6, joker: 2 });
   });
 
   it('preserves all unique card IDs', () => {
-    const deck = shuffleDeck(liarDeck);
+    const deck = shuffleDeck(LIAR_DECK);
     const ids = deck.map(c => c.id).sort((a, b) => a - b);
     expect(ids).toEqual(Array.from({ length: 20 }, (_, i) => i));
   });
 
   it('does not mutate the original deck', () => {
-    const original = JSON.parse(JSON.stringify(liarDeck));
-    shuffleDeck(liarDeck);
-    expect(liarDeck).toEqual(original);
+    const original = JSON.parse(JSON.stringify(LIAR_DECK));
+    shuffleDeck(LIAR_DECK);
+    expect(LIAR_DECK).toEqual(original);
   });
 
   it('produces a different order from the input (not identical)', () => {
     let diffFound = false;
     for (let attempt = 0; attempt < 10; attempt++) {
-      const deck = shuffleDeck(liarDeck);
-      if (JSON.stringify(deck) !== JSON.stringify(liarDeck)) {
+      const deck = shuffleDeck(LIAR_DECK);
+      if (JSON.stringify(deck) !== JSON.stringify(LIAR_DECK)) {
         diffFound = true;
         break;
       }
@@ -49,20 +49,20 @@ describe('shuffleDeck', () => {
 describe('dealCards', () => {
   it('gives each player exactly 5 cards', () => {
     const players = [{ name: 'A' }, { name: 'B' }];
-    dealCards(players, liarDeck);
+    dealCards(players, LIAR_DECK);
     players.forEach(p => expect(p.hand).toHaveLength(5));
   });
 
   it('deals no duplicate card IDs across all hands', () => {
     const players = [{ name: 'A' }, { name: 'B' }, { name: 'C' }];
-    dealCards(players, liarDeck);
+    dealCards(players, LIAR_DECK);
     const allIds = players.flatMap(p => p.hand.map(c => c.id));
     expect(new Set(allIds).size).toBe(allIds.length);
   });
 
   it('works for 4 players (max)', () => {
     const players = [{ name: 'A' }, { name: 'B' }, { name: 'C' }, { name: 'D' }];
-    dealCards(players, liarDeck);
+    dealCards(players, LIAR_DECK);
     players.forEach(p => expect(p.hand).toHaveLength(5));
     const allIds = players.flatMap(p => p.hand.map(c => c.id));
     expect(new Set(allIds).size).toBe(20);
@@ -70,7 +70,7 @@ describe('dealCards', () => {
 
   it('each card has a valid id and rank', () => {
     const players = [{ name: 'A' }, { name: 'B' }];
-    dealCards(players, liarDeck);
+    dealCards(players, LIAR_DECK);
     const validRanks = ['king', 'queen', 'ace', 'joker'];
     players.forEach(p => {
       p.hand.forEach(card => {
@@ -146,7 +146,11 @@ describe('createGameState', () => {
     expect(state.players).toEqual([]);
     expect(state.maxPlayers).toBe(4);
     expect(state.gameStarted).toBe(false);
-    expect(state.whosTurn).toBeNull();
+    expect(state.whosTurn).toEqual({
+      name: '',
+      playerId: '',
+      canCallLiar: false,
+    });
     expect(state.declaredRank).toBeNull();
     expect(state.moves).toEqual([]);
   });
@@ -160,8 +164,8 @@ describe('createGameState', () => {
   });
 });
 
-describe('tableRanks', () => {
+describe('TABLE_RANKS', () => {
   it('contains king, queen, ace', () => {
-    expect(tableRanks).toEqual(['king', 'queen', 'ace']);
+    expect(TABLE_RANKS).toEqual(['king', 'queen', 'ace']);
   });
 });
