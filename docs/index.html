@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Liar’s Deck — Project documentation</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fg: #0f172a;
+        --muted: #64748b;
+        --link: #2563eb;
+        --bg: #f8fafc;
+        --card: #fff;
+        --border: #e2e8f0;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #f1f5f9;
+          --muted: #94a3b8;
+          --link: #60a5fa;
+          --bg: #0f172a;
+          --card: #1e293b;
+          --border: #334155;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", system-ui, sans-serif;
+        line-height: 1.5;
+        margin: 0;
+        padding: 2rem 1.25rem 3rem;
+        background: var(--bg);
+        color: var(--fg);
+      }
+      main {
+        max-width: 40rem;
+        margin: 0 auto;
+      }
+      h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem;
+      }
+      p.lead {
+        color: var(--muted);
+        margin: 0 0 2rem;
+        font-size: 1.05rem;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      li {
+        margin-bottom: 0.75rem;
+      }
+      a {
+        color: var(--link);
+        text-decoration: none;
+        font-weight: 600;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+      }
+      footer {
+        margin-top: 2.5rem;
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Liar’s Deck</h1>
+      <p class="lead">
+        Real-time multiplayer bluffing card game — documentation and artifacts for the
+        <strong>Bluff_Multiplayer</strong> GitHub repository.
+      </p>
+      <div class="card">
+        <ul>
+          <li>
+            <a href="./documentation/user_manual.pdf">User Manual (PDF)</a>
+            — install, lobby, gameplay, reconnect, MongoDB optional, troubleshooting.
+          </li>
+          <li>
+            <a href="./documentation/architecture.pdf">Design / Architecture (PDF)</a>
+            — system diagram, requirements traceability, sockets, data model, persistence.
+          </li>
+          <li>
+            <a href="./documentation/slides.html">Marp presentation (HTML)</a>
+            — short hosted slide deck (export of Marp source in the repo).
+          </li>
+          <li>
+            <a href="https://github.com/joseph-ampfer/Bluff_Multiplayer">Source code on GitHub</a>
+          </li>
+        </ul>
+      </div>
+      <footer>
+        ASE 285 · Joey Ampfer · Published with
+        <a href="https://pages.github.com/">GitHub Pages</a>
+        from the <code>docs/</code> folder.
+      </footer>
+    </main>
+  </body>
+</html>
