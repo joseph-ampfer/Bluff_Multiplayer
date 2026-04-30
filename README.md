@@ -159,14 +159,14 @@ Each requirement includes a direct acceptance test. Testing will include:
 
 **Features delivered:** F1 (Matchmaking & Lobby), F2 (Card Dealing), F3 (Turn-Based Gameplay)
 
-### Sprint 2 (In Progress)
+### Sprint 2 (Complete)
 
 | Metric       | Planned | Completed | Burndown |
 | ------------ | ------- | --------- | -------- |
-| Features     | 3       | 0         | 0%       |
-| Requirements | 9       | 0         | 0%       |
+| Features     | 3       | 3         | 100%     |
+| Requirements | 9       | 9         | 100%     |
 
-**Features planned:** F4 (Bluff Detection), F5 (Hidden State Views), F6 (Session Persistence)
+**Features delivered:** F4 (Bluff Detection), F5 (Hidden State Views), F6 (Session Persistence)
 
 ---
 
