@@ -456,7 +456,7 @@ export function createApp() {
         resetGameState(gameState);
         //serverState.gameRooms[socket.data.roomName] = createGameState();
         io.to(socket.data.roomName).emit('gameEnd', winner.name);
-        io.to(socket.data.roomName).emit('gameState', gameState);
+        //io.to(socket.data.roomName).emit('gameState', gameState);
       }
       else {
         console.log('new round starts');

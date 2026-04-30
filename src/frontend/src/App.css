@@ -1,162 +1,1243 @@
+:root {
+  --gold: #c8a040;
+  --gold-bright: #e0bc60;
+  --gold-dim: rgba(200, 160, 64, 0.6);
+  --gold-faint: rgba(200, 160, 64, 0.25);
+  --panel-bg: rgba(6, 3, 0, 0.85);
+  --panel-border: rgba(200, 160, 64, 0.3);
+  --text-dim: rgba(255, 255, 255, 0.6);
+  --bg-dark: #120a03;
+}
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Background ────────────────────────────────────────────── */
+.bg {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  transition: filter 400ms ease, transform 400ms ease;
+}
+
+.bg--blurred {
+  filter: blur(8px) brightness(0.4);
+  transform: scale(1.04);
+}
+
+/* ─── Screen wrapper ────────────────────────────────────────── */
+.screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: screen-fade-in 320ms ease forwards;
+}
+
+@keyframes screen-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Shared controls ───────────────────────────────────────── */
+.btn {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  background: var(--panel-bg);
+  color: var(--gold-dim);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s, transform 0.06s, box-shadow 0.18s;
+  outline: none;
+}
+.btn:hover:not(:disabled) {
+  background: rgba(20, 10, 2, 0.95);
+  color: var(--gold);
+  border-color: var(--gold-dim);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: linear-gradient(180deg, rgba(200, 160, 64, 0.24), rgba(200, 160, 64, 0.08));
+  color: var(--gold-bright);
+  border-color: var(--gold-dim);
+}
+.btn--primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(200, 160, 64, 0.4), rgba(200, 160, 64, 0.18));
+  color: #fff;
+  box-shadow: 0 0 18px rgba(200, 160, 64, 0.25);
+}
+
+.btn--ghost {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  letter-spacing: 0.18em;
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+.btn--ghost:hover:not(:disabled) {
+  color: var(--gold);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.input {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.55);
+  color: var(--gold-bright);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  text-transform: uppercase;
+}
+.input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(200, 160, 64, 0.18);
+}
+.input::placeholder {
+  color: rgba(200, 160, 64, 0.4);
+  letter-spacing: 0.12em;
+}
+
+/* ─── Panel (centered card on lobby/room/gameover) ──────────── */
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  padding: 32px 36px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: min(440px, 92vw);
+  max-height: 92vh;
+}
+
+.panel__divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-faint), transparent);
+  margin: 2px 0;
+}
+
+/* ─── Lobby ─────────────────────────────────────────────────── */
+.lobby__title {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: clamp(36px, 6vmin, 56px);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--gold);
   text-align: center;
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.9),
+    0 0 18px rgba(200, 160, 64, 0.35);
+  margin: 0;
+}
+.lobby__subtitle {
+  font-family: 'IM Fell DW Pica', Georgia, serif;
+  font-style: italic;
+  color: var(--text-dim);
+  font-size: 15px;
+  text-align: center;
+  letter-spacing: 0.08em;
+  margin-top: -8px;
+}
+.lobby__buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.lobby__buttons .btn {
+  flex: 1;
+}
+.lobby__footer {
+  margin-top: 6px;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+/* ─── Room ──────────────────────────────────────────────────── */
+.room__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.room__code-label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.room__code {
+  font-family: 'IM Fell DW Pica', Georgia, serif;
+  font-size: 28px;
+  letter-spacing: 0.18em;
+  color: var(--gold-bright);
+  text-shadow: 0 0 12px rgba(200, 160, 64, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.room__section-label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.room__player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 36vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+.player-row__name {
+  flex: 1;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.86);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.player-row__name.--me {
+  color: var(--gold-bright);
+}
+.player-row__status {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.player-row__status.--ready {
+  color: var(--gold-bright);
+}
+.player-row__status.--waiting {
+  color: var(--text-dim);
+}
+.room__field {
+  display: flex;
+  gap: 8px;
+}
+.room__field .input {
+  flex: 1;
+}
+.room__ready {
+  font-size: 16px;
+  padding: 14px;
+}
+
+/* ─── Game over ─────────────────────────────────────────────── */
+.gameover__headline {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: clamp(28px, 5vmin, 42px);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  text-align: center;
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.9),
+    0 0 18px rgba(200, 160, 64, 0.35);
+}
+.gameover__subtitle {
+  font-family: 'IM Fell DW Pica', Georgia, serif;
+  color: var(--text-dim);
+  font-style: italic;
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+
+/* ─── Avatar ────────────────────────────────────────────────── */
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid var(--gold-dim);
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  flex-shrink: 0;
+  transition: box-shadow 0.2s, border-color 0.2s, filter 0.2s;
+}
+.avatar.--ready {
+  border-color: var(--gold);
+  box-shadow: 0 0 14px rgba(200, 160, 64, 0.45);
+}
+.avatar.--eliminated {
+  filter: grayscale(0.85) brightness(0.55);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ─── Toast (errors and notifications) ──────────────────────── */
+.toast-stack {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+  max-width: 90vw;
+}
+.toast {
+  background: rgba(60, 8, 8, 0.92);
+  color: #ffd2b8;
+  border: 1px solid rgba(255, 90, 90, 0.4);
+  padding: 8px 14px 8px 18px;
+  border-radius: 22px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  pointer-events: auto;
+  backdrop-filter: blur(10px);
+  animation: toast-in 220ms ease forwards;
+}
+.toast.--error {
+  background: rgba(60, 8, 8, 0.92);
+  color: #ffd2b8;
+  border-color: rgba(255, 90, 90, 0.4);
+}
+.toast.--info {
+  background: rgba(6, 3, 0, 0.88);
+  color: var(--gold-bright);
+  border-color: var(--gold-dim);
+}
+.toast.--success {
+  background: rgba(8, 28, 14, 0.9);
+  color: #d3e6c7;
+  border-color: rgba(160, 200, 120, 0.45);
+}
+.toast.--liar {
+  background: rgba(50, 4, 4, 0.94);
+  color: #ffe2c8;
+  border: 1px solid rgba(220, 80, 80, 0.55);
+  font-size: 14px;
+  padding: 12px 18px 12px 22px;
+  letter-spacing: 0.18em;
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 600;
+  box-shadow:
+    0 0 22px rgba(220, 60, 60, 0.35),
+    0 8px 22px rgba(0, 0, 0, 0.55);
+}
+.toast__close {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  line-height: 1;
+}
+.toast__close:hover {
+  color: #fff;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Playing screen (Phase 1: container only, no redesign) ─── */
+.playing-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
   color: white;
+  text-align: center;
+  overflow: auto;
+  padding: 16px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+/* Bottom-right action cluster — beside the local seat (bottom center). */
+.playing-actions {
+  position: fixed;
+  right: clamp(12px, 3vw, 28px);
+  bottom: clamp(108px, 18vh, 200px);
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  width: min(200px, 42vw);
+  pointer-events: auto;
+  text-align: center;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.playing-actions--hidden {
+  display: none;
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.playing-actions--visible {
+  display: flex;
+}
+.playing-actions .btn {
+  width: 100%;
+}
+.playing-actions__play {
+  order: 1;
+}
+.playing-actions__liar {
+  order: 2;
 }
 
-@keyframes logo-spin {
+/* ─── Seat (parea) ──────────────────────────────────────────── */
+.parea {
+  position: fixed;
+  z-index: 10;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+.parea.position-0 {
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: column-reverse;
+  gap: 10px;
+}
+.parea.position-1 {
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: row;
+}
+.parea.position-2 {
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: column;
+  gap: 10px;
+}
+.parea.position-3 {
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: row-reverse;
+}
+
+/* ─── Identity row (avatar + meta + cylinder) ──────────────── */
+.parea__identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  background: rgba(6, 3, 0, 0.55);
+  border: 1px solid rgba(200, 160, 64, 0.18);
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.parea.--active .parea__identity {
+  border-color: var(--gold);
+  box-shadow: 0 0 18px rgba(200, 159, 64, 0.93);
+  animation: turn-pulse 2.4s ease-in-out infinite;
+}
+@keyframes turn-pulse {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(200, 159, 64, 0.45);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 26px rgba(200, 159, 64, 1);
+    transform: scale(1.018);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .parea.--active .parea__identity {
+    animation: none;
+  }
+}
+.parea.--eliminated .parea__identity {
+  filter: grayscale(0.6) brightness(0.75);
+}
+
+.parea__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+.parea__name {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.86);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.parea__name.--me {
+  color: var(--gold-bright);
+}
+.parea__out-tag {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  color: #d96b6b;
+  margin-top: 2px;
+  padding: 1px 6px;
+  border: 1px solid rgba(217, 107, 107, 0.5);
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+/* Position-2 (top seat) flips its identity row so the name/avatar still
+   read upright while the hand fan below appears to point downward. */
+.parea.position-2 .parea__identity {
+  order: 2;
+}
+
+/* ─── Hand (fan) ────────────────────────────────────────────── */
+.hand {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  align-items: flex-end;
+  padding: 0 8px;
+}
+.hand.position-1 {
+  transform: rotate(90deg);
+}
+.hand.position-2 {
+  transform: rotate(180deg);
+}
+.hand.position-3 {
+  transform: rotate(270deg);
+}
+
+/* ─── Card shell ────────────────────────────────────────────── */
+.playing-card {
+  width: 84px;
+  height: 118px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  perspective: 900px;
+  cursor: pointer;
+  transition: transform 0.22s ease, filter 0.22s ease;
+  position: relative;
+}
+.playing-card + .playing-card {
+  margin-left: -22px;
+}
+.playing-card:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+.playing-card.disabled {
+  cursor: default;
+}
+.playing-card.--interactive:hover {
+  transform: translateY(-12px) rotate(0deg) !important;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.55));
+  z-index: 50;
+}
+.playing-card.selected {
+  transform: translateY(-22px) rotate(0deg) !important;
+  filter: drop-shadow(0 0 14px rgba(200, 160, 64, 0.55))
+          drop-shadow(0 8px 14px rgba(0, 0, 0, 0.55));
+  z-index: 60;
+}
+.playing-card.played {
+  cursor: default;
+}
+
+.playing-card__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+  border-radius: 10px;
+}
+.playing-card.--face-down .playing-card__inner {
+  transform: rotateY(180deg);
+}
+
+/* ─── Card faces ────────────────────────────────────────────── */
+.card-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 0 0 1px rgba(0, 0, 0, 0.55),
+    0 6px 12px rgba(0, 0, 0, 0.45);
+}
+
+.card-face--front {
+  background:
+    radial-gradient(circle at 30% 20%, #fbf3df 0%, #f1e6c8 55%, #e3d3a8 100%);
+  color: #2a1a05;
+  font-family: 'IM Fell DW Pica', 'Cinzel', Georgia, serif;
+  border: 1px solid rgba(160, 120, 40, 0.45);
+}
+.card-face--front::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(160, 120, 40, 0.35);
+  border-radius: 7px;
+  pointer-events: none;
+}
+
+.card-face__pip {
+  position: absolute;
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: #8a6a14;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.card-face__pip--tl {
+  top: 8px;
+  left: 8px;
+}
+.card-face__pip--br {
+  bottom: 8px;
+  right: 8px;
+  transform: rotate(180deg);
+}
+
+.card-face__center {
+  font-size: 56px;
+  line-height: 1;
+  color: #8a6a14;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55),
+    0 2px 6px rgba(0, 0, 0, 0.18);
+  user-select: none;
+}
+.card-face__center.--king {
+  font-size: 60px;
+  color: #b8881e;
+}
+.card-face__center.--queen {
+  font-size: 56px;
+  color: #b8881e;
+}
+.card-face__center.--ace {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 72px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.card-face__center.--joker {
+  font-size: 58px;
+  color: #b8881e;
+}
+
+/* Card back: blue gradient + diagonal pattern + gold inner border */
+.card-face--back {
+  transform: rotateY(180deg);
+  background:
+    linear-gradient(135deg, #1f3a6b 0%, #2a4d8a 50%, #16284d 100%);
+  border: 1px solid rgba(200, 160, 64, 0.45);
+}
+.card-face__back-pattern {
+  position: absolute;
+  inset: 5px;
+  border-radius: 7px;
+  border: 1px solid rgba(200, 160, 64, 0.55);
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(200, 160, 64, 0.18) 0 2px,
+      transparent 2px 8px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(200, 160, 64, 0.10) 0 2px,
+      transparent 2px 8px
+    );
+}
+.card-face__back-emblem {
+  position: relative;
+  z-index: 1;
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 700;
+  font-size: 38px;
+  color: var(--gold-bright);
+  text-shadow:
+    0 0 8px rgba(200, 160, 64, 0.55),
+    0 2px 4px rgba(0, 0, 0, 0.7);
+  letter-spacing: 0.05em;
+}
+
+/* ─── Play area at felt center ─────────────────────────────── */
+.play-area {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 360px;
+  height: 220px;
+  z-index: 5;
+  pointer-events: none;
+  perspective: 680px;
+  perspective-origin: 50% 30%;
+}
+.play-area__cards {
+  position: absolute;
+  inset: 0;
+  transform: rotateX(50deg);
+  transform-style: preserve-3d;
+}
+.play-area__card {
+  position: absolute !important;
+  top: 50%;
+  left: 50%;
+  /* transform set inline; default keeps card centered if no inline transform */
+}
+.play-area__card .playing-card__inner {
+  /* Played cards lay flat — disable hover lift inside the play area */
+  transition: none;
+}
+
+/* ─── Cylinder (revolver) ──────────────────────────────────── */
+.cylinder {
+  position: relative;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, #6c6f73 0%, #3a3d40 55%, #1d1e20 100%);
+  border: 1px solid rgba(200, 160, 64, 0.55);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 4px 10px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+.cylinder__hub {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18%;
+  height: 18%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #8a8d90, #2a2c2e);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+.chamber {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IM Fell DW Pica', 'Cinzel', Georgia, serif;
+  transform-origin: center;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.55);
+}
+.chamber__glyph {
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 700;
+  user-select: none;
+}
+.chamber.unrevealed {
+  background: radial-gradient(circle at 35% 30%, #2a2b2d 0%, #0c0d0e 100%);
+  color: rgba(200, 160, 64, 0.85);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.7);
+}
+.chamber.spent {
+  background: radial-gradient(circle at 35% 30%, #4a4d50 0%, #1a1b1d 100%);
+  color: transparent;
+  box-shadow:
+    inset 0 1px 1px rgba(0, 0, 0, 0.65),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+.chamber.spent.--lethal {
+  background: radial-gradient(circle at 35% 30%, #ff5a5a 0%, #6a0d0d 80%);
+  color: #fff5f5;
+  box-shadow:
+    inset 0 1px 1px rgba(0, 0, 0, 0.6),
+    0 0 10px rgba(255, 60, 60, 0.55);
+}
+.chamber.spent.--lethal .chamber__glyph {
+  font-size: 11px;
+  text-shadow: 0 0 4px rgba(255, 200, 200, 0.8);
+}
+
+/* ─── Card fly animation (Phase 4) ─────────────────────────── */
+
+/* Hand slot reserved during flight: keeps fan layout stable while the
+   ghost flies, so the hand doesn't visibly collapse until the server
+   sends the updated hand. */
+.playing-card.playing-card--leaving {
+  opacity: 0;
+  pointer-events: none;
+  transition: none;
+}
+.playing-card.playing-card--leaving:hover {
+  transform: inherit !important;
+  filter: none;
+}
+
+/* Portaled ghost wrapper. Sits on top of everything in viewport space;
+   inline styles drive position + transition during flight. */
+.card-ghost {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  will-change: top, left, transform;
+  filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.55));
+}
+.card-ghost .playing-card {
+  width: 100%;
+  height: 100%;
+  cursor: default;
+  transition: none;
+}
+.card-ghost .playing-card.--interactive:hover {
+  transform: none !important;
+  filter: none;
+}
+
+/* ─── Roulette overlay (Phase 5) ───────────────────────────── */
+
+/* Vignette: full-screen darken with a soft transparent disc centered on
+   the firing player's seat. Inline CSS variables --cx/--cy come from JS,
+   set in pixels. */
+.roulette-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--cx, 50%) var(--cy, 50%),
+    transparent 0,
+    transparent 90px,
+    rgba(0, 0, 0, 0.6) 220px,
+    rgba(0, 0, 0, 0.88) 420px
+  );
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.roulette-vignette.--visible {
+  opacity: 1;
+}
+
+/* Big cylinder wrapper. Inline left/top/width/height drive the
+   seat -> center -> seat trip. */
+.roulette-big-cylinder {
+  position: fixed;
+  z-index: 9001;
+  pointer-events: none;
+  transition:
+    left 400ms cubic-bezier(.22, .7, .2, 1),
+    top 400ms cubic-bezier(.22, .7, .2, 1),
+    width 400ms cubic-bezier(.22, .7, .2, 1),
+    height 400ms cubic-bezier(.22, .7, .2, 1);
+  filter: drop-shadow(0 22px 32px rgba(0, 0, 0, 0.65));
+}
+
+/* Generic cylinder face — featureless brushed steel chambers, no glyphs,
+   no spent dimming, no lethal red. Used for the spin theater. */
+.cylinder.--generic .chamber {
+  background: radial-gradient(circle at 35% 30%, #5a5d60 0%, #1f2123 100%);
+  color: transparent;
+  box-shadow:
+    inset 0 1px 1px rgba(0, 0, 0, 0.65),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+.cylinder.--generic .chamber__glyph {
+  color: transparent;
+}
+
+/* Spinning cylinder: rotate its rendered chamber ring. The chambers
+   already use transform for orbit positioning, so we rotate the
+   container instead via a CSS variable on a child wrapper… but since
+   each chamber is laid out via inline transform, the simplest reliable
+   path is to rotate the whole .cylinder. The hub is dead-center, so
+   it spins invisibly. */
+.cylinder.--spinning {
+  animation: roulette-spin 1800ms cubic-bezier(.15, .85, .2, 1) forwards;
+}
+@keyframes roulette-spin {
   from {
     transform: rotate(0deg);
   }
   to {
-    transform: rotate(360deg);
+    /* 4 full turns + small lock offset so chamber 0 lands near 12 o'clock */
+    transform: rotate(1440deg);
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+/* Reveal — non-lethal: soft pulse on the whole cylinder. */
+.cylinder.--click {
+  animation: roulette-click 320ms ease-out;
+}
+@keyframes roulette-click {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+/* Reveal — lethal: chamber 0 (first .chamber after .cylinder__hub)
+   flashes red and the cylinder gives a hard pulse. */
+.cylinder.--bang {
+  animation: roulette-bang-pulse 480ms ease-out;
+}
+@keyframes roulette-bang-pulse {
+  0%   { transform: scale(1); }
+  20%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+.cylinder.--bang .chamber:nth-of-type(1) {
+  animation: roulette-bang-flash 480ms ease-out forwards;
+}
+@keyframes roulette-bang-flash {
+  0% {
+    background: radial-gradient(circle at 35% 30%, #ffdada 0%, #ff3b3b 60%, #6a0d0d 100%);
+    box-shadow:
+      0 0 18px rgba(255, 80, 80, 0.95),
+      inset 0 1px 1px rgba(0, 0, 0, 0.6);
+  }
+  60% {
+    background: radial-gradient(circle at 35% 30%, #ff8a8a 0%, #c2222a 70%, #4a0a0a 100%);
+    box-shadow:
+      0 0 24px rgba(255, 60, 60, 0.85),
+      inset 0 1px 1px rgba(0, 0, 0, 0.6);
+  }
+  100% {
+    background: radial-gradient(circle at 35% 30%, #ff5a5a 0%, #6a0d0d 80%);
+    box-shadow:
+      0 0 10px rgba(255, 60, 60, 0.55),
+      inset 0 1px 1px rgba(0, 0, 0, 0.6);
   }
 }
 
-.card {
-  padding: 2em;
+/* Screen shake — applied briefly to <body> on the bang. */
+.app-shake {
+  animation: app-shake 500ms cubic-bezier(.36, .07, .19, .97) both;
+}
+@keyframes app-shake {
+  10%, 90% { transform: translate(-2px, 0); }
+  20%, 80% { transform: translate(3px, 0); }
+  30%, 50%, 70% { transform: translate(-5px, 1px); }
+  40%, 60% { transform: translate(5px, -1px); }
 }
 
-.read-the-docs {
-  color: #888;
-}
-
-.game-started {
-  display: flex;
-}
-
-.game-not-started {
-  display: none;
-}
-
-.my-turn {
-
-}
-
-.playing-card-container {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
-}
-
-.playing-card {
-  width: 100px;
-  height: 150px;
-  background-color: white;
-  border: 1px solid black;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.3s ease;
-}
-
-.playing-card:hover {
-  background-color: #f0f0f0;
-}
-
-.playing-card.disabled {
-  background-color: #f0f0f0;
-  cursor: default;
-}
-
-.playing-card.disabled:hover {
-  background-color: #f0f0f0;
-  border: 1px solid black;
-}
-
-.playing-card.selected {
-  background-color: black;
-  color: white;
-  transform: translateY(-10px);
-  transition: all 0.3s ease; 
-}
-
-.error-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
-
-.error {
-  color: red;
-  font-weight: bold;
-}
-
-#background-image {
+/* ─── Declared rank banner (Phase 6) ───────────────────────── */
+.declared-rank {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1;
-}
-
-.table-surface {
-  /* background-color: rgba(0, 255, 8, 0.269); */
-  z-index: -1;
-  position: fixed;
-  /* TODO: make this dynamic based on the size of the screen */
-  top: 25%;
-  left: 10%;
-  width: 75vw;
-  height: 50vh;
-
-  transform: rotateX(50deg);
-  /* transform-origin: bottom center; */
-  perspective: 1000px;
-  transform-style: preserve-3d;
-
-  display: relative;
-
-}
-
-.table-card {
-  background-color: rgba(192, 192, 192, 0.925);
-  transform: rotateZ(45deg);
-  scale: 0.85;
-  position: absolute;
-  top: 50%;
-  left: 35%;
-  transform: translate(-50%, -50%) rotateZ(25deg);
-}
-
-.playing-card.played {
-  background-color: rgba(192, 192, 192, 0.704);
-  color: black;
-  z-index: -1;
-  position: fixed;
-  top: 50%;
+  top: 14px;
   left: 50%;
-  transform: translate(-50%, -50%) rotateX(50deg) rotateZ(45deg);
-  scale: 0.85;
-  /* transform-origin: bottom center; */
-  perspective: 1000px;
-  transform-style: preserve-3d;
-  transition: all 1s ease;
+  transform: translateX(-50%);
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 22px 10px;
+  background: rgba(6, 3, 0, 0.55);
+  border: 1px solid rgba(200, 160, 64, 0.25);
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: none;
+  animation: declared-rank-in 280ms ease forwards;
+}
+.declared-rank__label {
+  font-family: 'IM Fell DW Pica', Georgia, serif;
+  font-style: italic;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.declared-rank__rank {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  color: var(--gold-bright);
+  text-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.85),
+    0 0 14px rgba(200, 160, 64, 0.45);
+}
+@keyframes declared-rank-in {
+  from { opacity: 0; transform: translate(-50%, -6px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ─── Audio controls (Phase 6) ─────────────────────────────── */
+.audio-controls {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 1100;
+  font-family: 'Cinzel', Georgia, serif;
+}
+.audio-controls__toggle {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  color: var(--gold);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: color 0.18s, border-color 0.18s, box-shadow 0.18s;
+}
+.audio-controls__toggle:hover {
+  color: var(--gold-bright);
+  border-color: var(--gold-dim);
+  box-shadow: 0 0 16px rgba(200, 160, 64, 0.3);
+}
+.audio-controls__panel {
+  position: absolute;
+  top: 46px;
+  right: 0;
+  min-width: 240px;
+  padding: 14px 14px 12px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  animation: audio-panel-in 180ms ease forwards;
+}
+@keyframes audio-panel-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.audio-controls__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.audio-controls__mute {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--panel-border);
+  color: var(--gold);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.18s, border-color 0.18s;
+}
+.audio-controls__mute:hover {
+  color: var(--gold-bright);
+  border-color: var(--gold-dim);
+}
+.audio-controls__row-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.audio-controls__label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.audio-controls__row input[type='range'] {
+  width: 100%;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
+.audio-controls__row input[type='range']:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.audio-controls__divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-faint), transparent);
+  margin: 4px 0 2px;
+}
+.audio-controls__about,
+.audio-controls__leave {
+  text-align: left;
+  width: 100%;
+}
+
+/* ─── About modal (Phase 6) ────────────────────────────────── */
+.about-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: about-backdrop-in 200ms ease forwards;
+}
+@keyframes about-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.about-panel {
+  position: relative;
+  width: min(520px, 92vw);
+}
+.about-panel__close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: color 0.18s, background 0.18s;
+}
+.about-panel__close:hover {
+  color: var(--gold-bright);
+  background: rgba(255, 255, 255, 0.05);
+}
+.about-panel__blurb {
+  font-family: 'IM Fell DW Pica', Georgia, serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: 0.04em;
+}
+.about-panel__section-label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.about-panel__credits {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  max-height: 38vh;
+  overflow-y: auto;
+}
+.about-panel__credit-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0;
+  border-bottom: 1px dashed rgba(200, 160, 64, 0.12);
+}
+.about-panel__credit-row:last-child {
+  border-bottom: none;
+}
+.about-panel__credit-row dt {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.78);
+}
+.about-panel__credit-row dd {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--gold-dim);
+  text-align: right;
+}
+.about-panel__footer {
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 4px;
 }
