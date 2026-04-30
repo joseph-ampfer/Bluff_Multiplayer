@@ -7,12 +7,20 @@ import { createServer } from 'http';
 import crypto from 'crypto';
 import { TABLE_RANKS, LIAR_DECK, ROOM_NAME, createGameState, hideGameState, dealCards, showCurrentPlayerHand, dealRevolver, playRoulette, newRound, getFirstPlayerOfNewRound, getNextPlayerInTurnOrder, createPlayer, resetGameState } from './gameLogic.js';
 import type { Player, Rank, LiarCard, ServerState, SessionByToken } from '../shared/types.js';
-
-
+import {
+  connectMongo,
+  loadRoomSnapshots,
+  persistRoomSnapshot,
+  deleteRoomSnapshot,
+  isMongoPersistenceEnabled,
+} from './mongoPersistence.js';
 
 dotenv.config();
 
-export function createApp() {
+export async function createApp() {
+  await connectMongo();
+  const loadedRooms = await loadRoomSnapshots();
+
   const app = express();
   const httpServer = createServer(app);
 
@@ -35,12 +43,22 @@ export function createApp() {
   // app.use('/public', express.static('public'));
 
 
-  const gameState2 = createGameState();
   const serverState: ServerState = {
-    gameRooms: {},
+    gameRooms: { ...loadedRooms },
   };
-  serverState.gameRooms[ROOM_NAME] = gameState2;
+  if (!serverState.gameRooms[ROOM_NAME]) {
+    serverState.gameRooms[ROOM_NAME] = createGameState();
+  }
   const sessionByToken: SessionByToken = {};
+
+  function schedulePersistRoom(roomName: string) {
+    const gs = serverState.gameRooms[roomName];
+    if (gs) persistRoomSnapshot(roomName, gs);
+  }
+
+  if (isMongoPersistenceEnabled() && !loadedRooms[ROOM_NAME]) {
+    schedulePersistRoom(ROOM_NAME);
+  }
   
   app.get('/', (req, res) => {
     res.send('Hello World!')
@@ -119,6 +137,7 @@ export function createApp() {
 
       const hiddenHandsGameState = hideGameState(newGameState);
       io.to(roomName).emit('gameState', hiddenHandsGameState);
+      schedulePersistRoom(roomName);
     });
 
     // join room creates your player object and starts a session for you
@@ -193,6 +212,7 @@ export function createApp() {
 
       const hiddenHandsGameState = hideGameState(gameState);
       io.to(roomName).emit('gameState', hiddenHandsGameState);
+      schedulePersistRoom(roomName);
     });
 
     socket.on('leaveRoom', (roomName: string) => {
@@ -221,7 +241,10 @@ export function createApp() {
       // If the room is empty, delete the room
       if (gameState.players.length === 0) {
         delete serverState.gameRooms[roomName];
+        deleteRoomSnapshot(roomName);
         console.log('room removed from server state', roomName);
+      } else {
+        schedulePersistRoom(roomName);
       }
 
     });
@@ -288,9 +311,11 @@ export function createApp() {
         
         const hiddenHandsGameState = hideGameState(gameState);
         io.to(socket.data.roomName).emit('gameState', hiddenHandsGameState);
+        schedulePersistRoom(socket.data.roomName);
       } else {
         const hiddenHandsGameState = hideGameState(gameState);
         io.to(socket.data.roomName).emit('gameState', hiddenHandsGameState);
+        schedulePersistRoom(socket.data.roomName);
       }
     });
 
@@ -365,7 +390,8 @@ export function createApp() {
       io.to(socket.data.roomName).emit('playCards', socket.data.player.name, cardIds.length)
 
       const hiddenHandsGameState = hideGameState(gameState);
-      io.to(socket.data.roomName).emit('gameState', hiddenHandsGameState); 
+      io.to(socket.data.roomName).emit('gameState', hiddenHandsGameState);
+      schedulePersistRoom(socket.data.roomName);
     });
 
     socket.on('callLiar', () => {
@@ -456,6 +482,7 @@ export function createApp() {
         resetGameState(gameState);
         //serverState.gameRooms[socket.data.roomName] = createGameState();
         io.to(socket.data.roomName).emit('gameEnd', winner.name);
+        schedulePersistRoom(socket.data.roomName);
         //io.to(socket.data.roomName).emit('gameState', gameState);
       }
       else {
@@ -476,6 +503,7 @@ export function createApp() {
         }
         const hiddenHandsGameState = hideGameState(gameState);
         io.to(socket.data.roomName).emit('gameState', hiddenHandsGameState);
+        schedulePersistRoom(socket.data.roomName);
       }
      
     });
@@ -487,6 +515,9 @@ export function createApp() {
     httpServer,
     io,
     getGameState: () => serverState.gameRooms[ROOM_NAME],
-    resetGameState: () => { serverState.gameRooms[ROOM_NAME] = createGameState(); },
+    resetGameState: () => {
+      serverState.gameRooms[ROOM_NAME] = createGameState();
+      schedulePersistRoom(ROOM_NAME);
+    },
   };
 }

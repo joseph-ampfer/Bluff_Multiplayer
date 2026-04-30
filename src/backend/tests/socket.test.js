@@ -19,13 +19,13 @@ function waitForEvent(socket, event) {
   });
 }
 
-beforeEach((ctx) => {
-  return new Promise((resolve) => {
-    const app = createApp();
-    httpServer = app.httpServer;
-    io = app.io;
-    getGameState = app.getGameState;
-    resetGameState = app.resetGameState;
+beforeEach(async () => {
+  const app = await createApp();
+  httpServer = app.httpServer;
+  io = app.io;
+  getGameState = app.getGameState;
+  resetGameState = app.resetGameState;
+  await new Promise((resolve) => {
     httpServer.listen(0, () => resolve());
   });
 });
