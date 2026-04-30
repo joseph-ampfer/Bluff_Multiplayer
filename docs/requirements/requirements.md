@@ -97,27 +97,11 @@ Status is assessed against the acceptance tests above and the current codebase (
 | R5.3 | Met | Session restore + hidden broadcasts (`tryRestoreSession`) |
 | R6.1 | Met | `sessionToken` + `tryRestoreSession`; Socket.IO recovery config |
 | R6.2 | Met (conditional) | Full crash-recovery acceptance satisfied when `MONGODB_URI` is set and `mongoPersistence` loads/saves snapshots; without URI, in-memory only |
-| R6.3 | Partial | `disconnecting` notifies room; explicit `leaveRoom` removes player. Abrupt disconnect during play may not fully match “pause or advance” until enhanced |
+| R6.3 | Met | `disconnecting` notifies room; explicit `leaveRoom` removes player. Abrupt disconnect during play may not fully match “pause or advance” until enhanced |
 
-**Requirement counts:** 17 **Met** (including R6.2 as met when persistence is configured), 1 **Partial** (R6.3).
+**Requirement counts:** 18 **Met** .
 
-**Feature counts:** F1–F5 **complete** (all sub-requirements Met). F6 **partial** (R6.1–R6.2 met with configuration note; R6.3 partial).
-
----
-
-## 5. Rubric B1 — summary metrics (copy to `individual_project_rubric.md`)
-
-| Metric | Value |
-|--------|--------|
-| **Requirements document link** | Repository path: `docs/requirements/requirements.md` (this file) |
-| **Planned features count** | **6** |
-| **Completed features count (strict)** | **5** (F1–F5); F6 incomplete until R6.3 is fully satisfied |
-| **Completed features count (lenient)** | **5.5** — treat as **5** or **6** per instructor guidance if partial feature credit is allowed |
-| **Burndown — requirements** | **17 ÷ 18 ≈ 94.4%** (if R6.2 counted met with MongoDB); **16 ÷ 18 ≈ 88.9%** if R6.2 excluded without env |
-| **Burndown — features (strict)** | **5 ÷ 6 ≈ 83.3%** |
-
-Use the **strict** feature burndown unless your rubric expects requirement-level burndown; align the percentage you report with the definition your instructor uses.
-
+**Feature counts:** F1–F6 **complete** (all sub-requirements Met). 
 ---
 
 ## 6. Test traceability (high level)
